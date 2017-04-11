@@ -1,0 +1,32 @@
+{
+    "name": "cleeng/newrelic-middleware",
+    "description": "PSR-7 Middleware for sending data to New Relic",
+    "type": "library",
+    "license": "BSD-2-Clause",
+    "authors": [
+        {
+            "name": "Mateusz Tymek",
+            "email": "mtymek@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.0",
+        "intouch/newrelic": "^1.0",
+        "http-interop/http-middleware": "^0.4.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.1",
+        "zendframework/zend-diactoros": "^1.4",
+        "zendframework/zend-expressive-router": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cleeng\\NewRelicMiddleware\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Cleeng\\Test\\NewRelicMiddleware\\": "test"
+        }
+    }
+}
