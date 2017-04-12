@@ -11,8 +11,7 @@
     ],
     "require": {
         "php": "^7.0",
-        "intouch/newrelic": "^1.0",
-        "http-interop/http-middleware": "^0.4.1"
+        "intouch/newrelic": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.1",

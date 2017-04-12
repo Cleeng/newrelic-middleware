@@ -2,14 +2,12 @@
 
 namespace Cleeng\NewRelicMiddleware;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Intouch\Newrelic\Newrelic;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Expressive\Router\RouteResult;
 
-class NewRelicMiddleware implements MiddlewareInterface
+class NewRelicMiddleware
 {
     /** @var Newrelic */
     private $newrelic;
@@ -36,12 +34,12 @@ class NewRelicMiddleware implements MiddlewareInterface
         return $routeResult->getMatchedRouteName();
     }
 
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $this->newrelic->nameTransaction(
             '[' . $request->getMethod() . '] ' . $this->detectTransactionName($request)
         );
 
-        return $delegate->process($request);
+        return $next($request, $response);
     }
 }

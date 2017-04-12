@@ -29,12 +29,12 @@ class NewRelicMiddlewareTest extends TestCase
     public function testByDefaultTransactionIsNamedFromPath()
     {
         $request = new ServerRequest([], [],'/api/ping');
-        $delegate = $this->prophesize(DelegateInterface::class);
-        $delegate->process($request)->willReturn(new Response());
+        $delegate = function ($req, $res) { return new Response(); };
         $this->newrelic->nameTransaction('[GET] /api/ping')->shouldBeCalled();
-        $this->middleware->process(
+        ($this->middleware)(
             $request,
-            $delegate->reveal()
+            new Response(),
+            $delegate
         );
     }
 
@@ -44,12 +44,12 @@ class NewRelicMiddlewareTest extends TestCase
         $routeResult->getMatchedRouteName()->willReturn('api.create-user');
         $request = (new ServerRequest([], [],'/api/create-user', 'POST'))
             ->withAttribute(RouteResult::class, $routeResult->reveal());
-        $delegate = $this->prophesize(DelegateInterface::class);
-        $delegate->process($request)->willReturn(new Response());
+        $delegate = function ($req, $res) { return new Response(); };
         $this->newrelic->nameTransaction('[POST] api.create-user')->shouldBeCalled();
-        $this->middleware->process(
+        ($this->middleware)(
             $request,
-            $delegate->reveal()
+            new Response(),
+            $delegate
         );
     }
 }
