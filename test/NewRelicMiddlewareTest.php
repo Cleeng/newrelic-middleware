@@ -3,13 +3,11 @@
 namespace Cleeng\Test\NewRelicMiddleware;
 
 use Cleeng\NewRelicMiddleware\NewRelicMiddleware;
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use Intouch\Newrelic\Newrelic;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Request;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Uri;
+use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
 
 class NewRelicMiddlewareTest extends TestCase
@@ -40,12 +38,14 @@ class NewRelicMiddlewareTest extends TestCase
 
     public function testTransactionIsNamedFromRouteNameIfRouteResultIsAvailable()
     {
+        $route = $this->prophesize(Route::class);
+        $route->getPath()->willReturn('/api/user/:id');
         $routeResult = $this->prophesize(RouteResult::class);
-        $routeResult->getMatchedRouteName()->willReturn('api.create-user');
-        $request = (new ServerRequest([], [],'/api/create-user', 'POST'))
+        $routeResult->getMatchedRoute()->willReturn($route->reveal());
+        $request = (new ServerRequest([], [],'/api/user/123123', 'GET'))
             ->withAttribute(RouteResult::class, $routeResult->reveal());
         $delegate = function ($req, $res) { return new Response(); };
-        $this->newrelic->nameTransaction('[POST] api.create-user')->shouldBeCalled();
+        $this->newrelic->nameTransaction('[GET] /api/user/:id')->shouldBeCalled();
         ($this->middleware)(
             $request,
             new Response(),

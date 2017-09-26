@@ -24,14 +24,14 @@ class NewRelicMiddleware
     {
         $routeResult = $request->getAttribute(RouteResult::class);
         if (!$routeResult) {
-            return $request->getUri()->getPath();
+            return $request->getUri()->getPath() ? : '';
         }
         /** @var RouteResult $routeResult */
-        if (!$routeResult->getMatchedRouteName()) {
-            return $request->getUri()->getPath();
+        if (!$routeResult->getMatchedRoute()) {
+            return $request->getUri()->getPath() ? : '';
         }
 
-        return $routeResult->getMatchedRouteName();
+        return $routeResult->getMatchedRoute()->getPath();
     }
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
