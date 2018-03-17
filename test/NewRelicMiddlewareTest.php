@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cleeng\Test\NewRelicMiddleware;
 
 use Cleeng\NewRelicMiddleware\NewRelicMiddleware;
