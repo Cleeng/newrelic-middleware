@@ -10,11 +10,12 @@
         }
     ],
     "require": {
-        "php": "^7.0",
-        "intouch/newrelic": "^1.0"
+        "php": "^7.1",
+        "intouch/newrelic": "^1.0",
+        "http-interop/http-middleware": "^0.4.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.1",
+        "phpunit/phpunit": "^7",
         "zendframework/zend-diactoros": "^1.4",
         "zendframework/zend-expressive-router": "^2.1",
         "zendframework/zend-servicemanager": "^3.3",
