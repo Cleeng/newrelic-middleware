@@ -7,6 +7,9 @@ namespace Cleeng\Test\NewRelicMiddleware;
 use Cleeng\NewRelicMiddleware\NewRelicMiddleware;
 use Intouch\Newrelic\Newrelic;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Expressive\Router\Route;
@@ -29,13 +32,8 @@ class NewRelicMiddlewareTest extends TestCase
     public function testByDefaultTransactionIsNamedFromPath()
     {
         $request = new ServerRequest([], [],'/api/ping');
-        $delegate = function ($req, $res) { return new Response(); };
         $this->newrelic->nameTransaction('[GET] /api/ping')->shouldBeCalled();
-        ($this->middleware)(
-            $request,
-            new Response(),
-            $delegate
-        );
+        $this->middleware->process($request, $this->mockHandler());
     }
 
     public function testTransactionIsNamedFromRouteNameIfRouteResultIsAvailable()
@@ -46,12 +44,19 @@ class NewRelicMiddlewareTest extends TestCase
         $routeResult->getMatchedRoute()->willReturn($route->reveal());
         $request = (new ServerRequest([], [],'/api/user/123123', 'GET'))
             ->withAttribute(RouteResult::class, $routeResult->reveal());
-        $delegate = function ($req, $res) { return new Response(); };
         $this->newrelic->nameTransaction('[GET] /api/user/:id')->shouldBeCalled();
-        ($this->middleware)(
-            $request,
-            new Response(),
-            $delegate
-        );
+        $this->middleware->process($request, $this->mockHandler());
+    }
+
+    private function mockHandler()
+    {
+        return new class() implements RequestHandlerInterface
+        {
+
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                return new Response();
+            }
+        };
     }
 }
