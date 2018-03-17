@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cleeng\NewRelicMiddleware;
 
 use Intouch\Newrelic\Newrelic;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Expressive\Router\RouteResult;
 
-class NewRelicMiddleware
+class NewRelicMiddleware implements MiddlewareInterface
 {
     /** @var Newrelic */
     private $newrelic;
@@ -34,12 +38,12 @@ class NewRelicMiddleware
         return $routeResult->getMatchedRoute()->getPath();
     }
 
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $this->newrelic->nameTransaction(
             '[' . $request->getMethod() . '] ' . $this->detectTransactionName($request)
         );
 
-        return $next($request, $response);
+        return $handler->handle($request);
     }
 }
